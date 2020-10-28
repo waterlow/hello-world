@@ -1,12 +1,13 @@
 import React from 'react'
 import './board.css'
 import Square from './square'
+import type { Squares } from './types'
 
-const Board: React.FC<{ squares: number[], onClick: (i: number) => void }> = (props) => {
+const Board: React.FC<{ squares: Squares, onClick: (i: number) => void }> = ({squares, onClick}) => {
   const renderSquare = (i: number) => (
     <Square
-      value={props.squares[i]}
-      onClick={() => props.onClick(i)}/>
+      value={squares[i]}
+      onClick={() => onClick(i)}/>
   )
 
   return (

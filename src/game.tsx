@@ -1,8 +1,9 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import './game.css'
 import Board from './board'
+import type { History, Squares } from './types'
 
-const calculateWinner = (squares: number[]) => {
+const calculateWinner = (squares: Squares) => {
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -20,7 +21,7 @@ const calculateWinner = (squares: number[]) => {
 }
 
 const Game: React.FC = () => {
-  const [history, setHistory] = useState([{ squares: Array(9).fill(null) }])
+  const [history, setHistory] = useState<History>([{ squares: Array(9).fill('') }])
   const [stepNumber, setStepNumber] = useState(0)
   const xIsNext = (stepNumber % 2) === 0
   const currentSquares = history[history.length - 1].squares
@@ -34,14 +35,14 @@ const Game: React.FC = () => {
     }
   }, [winner, xIsNext])
 
-  const handleClick = (i: number) => {
+  const handleClick = useCallback((i: number) => {
     if (winner || currentSquares[i]) return
 
     const squares = currentSquares.slice()
     squares[i] = xIsNext ? 'X' : 'O'
     setStepNumber(stepNumber + 1)
     setHistory(history.concat([{ squares }]))
-  }
+  }, [currentSquares, history, stepNumber, winner, xIsNext])
 
   const jumpTo = useCallback((step: number) => {
     return () => {
@@ -61,7 +62,7 @@ const Game: React.FC = () => {
   return (
     <div className="game">
       <div className="game-board">
-        <Board squares={currentSquares} onClick={(i) => handleClick(i)} />
+        <Board squares={currentSquares} onClick={handleClick} />
       </div>
       <div className="game-info">
         <div>{status}</div>
